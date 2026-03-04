@@ -70,7 +70,15 @@ const stats = await Click.aggregate([
     }
   }
 ]);
-    return res.status(200).json({stats})
+  const result = stats[0];
+  return res.status(200).json({
+    totalClicks : result.totalClicks[0]?.count || 0,
+    browserStats : result.browserStats,
+    osStats : result.osStats,
+    deviceStats : result.deviceStats,
+    cpuStats : result.cpuStats,
+    totalMonthlystats : result.totalMonthlystats,
+  })
   } catch (error) {
     return res.status(500).json({message : "somthing went wrong " , error : error.message , stack : error.stack})
   }
