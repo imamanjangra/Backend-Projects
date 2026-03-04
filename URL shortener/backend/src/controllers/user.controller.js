@@ -249,8 +249,8 @@ export const getUserStats = async (req , res) => {
             {
                 $match : {
                     createdAt : {
-                        $gte : new Date(year , 1 , 1),
-                        $lte : new Date(year , 12 , 31)
+                        $gte : new Date(year , 0 , 1),
+                        $lte : new Date(year , 11 , 31)
                     }
                 }
             },

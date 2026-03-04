@@ -6,14 +6,19 @@ const clickSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "URL",
       required: true,
+      index : true
     },
-    ip: String,
     browser: String,
     os: String,
     device: String,
-    country: String,
+    cpu : String
   },
   { timestamps: true }
 );
+
+clickSchema.index({
+  urlId : 1 , createdAt: 1 
+})
+
 
 export const Click =  mongoose.model("Click", clickSchema);
