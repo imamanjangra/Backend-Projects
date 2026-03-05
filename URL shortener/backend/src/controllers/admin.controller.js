@@ -97,3 +97,82 @@ export const TotalURL = async (req, res) => {
   }
 };
 
+
+export const updateUserInfo = async (req, res) => {
+  try {
+    const { FullName, email } = req.body;
+
+    if (!FullName && !email) {
+      return res.status(401).json({ message: "Enter data for update " });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          FullName,
+          email,
+        },
+      },
+      {
+        new: true,
+      },
+    ).select("-password");
+
+    res.status(200).json({ message: "user detail is update" }, user);
+  } catch (error) {
+    res.status(400).json({ message: "somthing went wrong" }, error);
+  }
+};  
+
+
+export const updateUrl = async (req, res) => {
+  try {
+    const { originalUrl, customName } = req.body;
+
+    if (!originalUrl && !customName) {
+      return res.status(400).json({
+        message: "Provide at least one field to update",
+      });
+    }
+
+
+    const url = await URL.findById(req.params.id);
+
+    if (!url) {
+      return res.status(404).json({ message: "URL not found" });
+    }
+
+
+    if (originalUrl && originalUrl.trim() !== "") {
+      url.originalUrl = originalUrl.trim();
+    }
+
+    if (customName && customName.trim() !== "") {
+      const trimmedName = customName.trim();
+
+      const existing = await URL.findOne({ shortID: trimmedName });
+
+      if (existing && existing._id.toString() !== url._id.toString()) {
+        return res.status(400).json({
+          message: "Custom name is already taken",
+        });
+      }
+
+      url.shortID = trimmedName;
+    }
+
+    await url.save();
+
+    return res.status(200).json({
+      message: "URL updated successfully",
+      url,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+};
+
