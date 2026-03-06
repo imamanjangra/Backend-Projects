@@ -1,4 +1,4 @@
-import {createShortUrl , redirectUrl , getMyUrl , deleteUrl , updateUrl , Urlinfo , serchUrl} from "../controllers/url.controller.js"
+import {createShortUrl  , getMyUrl , deleteUrl , updateUrl , Urlinfo , serchUrl} from "../controllers/url.controller.js"
 import { ValidateUrl } from "../middleware/urlValidater.middleware.js";
 import { Protect } from "../middleware/auth.middleware.js";
 import { Router } from "express";
@@ -11,5 +11,4 @@ router.route("/delete/:id").delete(Protect , deleteUrl)
 router.route("/update/:id").patch(Protect , updateUrl)
 router.route("/urlinfo/:id").get(Protect , Urlinfo)
 router.route("/Search").get(Protect , serchUrl)
-router.route("/:shortID").get(redirectUrl)
 export default router;
