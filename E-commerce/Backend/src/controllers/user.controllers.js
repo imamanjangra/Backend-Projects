@@ -19,7 +19,7 @@ export const generateAccessTokenAndRefreshToken = async (id) => {
 };
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { firstname, lastname, mobileno, address, email, password } = req.body;
+  const { firstname, lastname, mobileno, email, password } = req.body;
 
   if (!firstname || !mobileno || !email || !password) {
     return res.status(400).json({ message: "Required fields are missing" });
@@ -37,12 +37,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     firstname,
     lastname,
     mobileno,
-    address: {
-      state: address?.state,
-      city: address?.city,
-      pincode: address?.pincode,
-      street: address?.street,
-    },
     email,
     password,
   });

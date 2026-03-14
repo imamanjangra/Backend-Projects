@@ -17,21 +17,6 @@ const userSchema =  new Schema(
       required: true,
       unique: true,
     },
-    address: {
-      state: {
-        type: String,
-      },
-      city: {
-        type: String,
-      },
-      pincode: {
-        type: String,
-      },
-      street: {
-        type: String,
-        
-      },
-    },
     isverified: {
       type: Boolean,
       default: false,
