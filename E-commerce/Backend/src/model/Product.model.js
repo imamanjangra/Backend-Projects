@@ -1,63 +1,90 @@
-import mongoose , {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const ProductModel = new Schema({
-   name : {
-    type : String,
-    required : true
-   } ,
-   description : {
-    type : String,
-    required : true
-   } ,
-   bought : {
-    type : String,
-   },
-   brandLink : {
-    type : String
-   },
-   price : {
-    type : String,
-    required : true
-   } ,
-   discountPrice : {
-    type : String,
-   } ,
-   category : {
-    type : String,
-    required : true
-   } ,
-   brand : {
-    type : String,
-    // required : true
-   } ,
-   stock : {
-    type : String,
-    required : true
-   } ,
-   coverImage : {
-    type : String,
-    required : true,
-   },
-   images: [
+const productSchema = new Schema(
+  {
+
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    description: {
+      type: String,
+      required: true
+    },
+
+    brand: {
+      type: String
+    },
+
+    brandLink: {
+      type: String
+    },
+
+    price: {
+      type: Number,
+      required: true
+    },
+
+    discountPrice: {
+      type: Number
+    },
+
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true
+    },
+
+    stock: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+
+    soldCount: {
+      type: Number,
+      default: 0
+    },
+
+    coverImage: {
+      type: String,
+      required: true
+    },
+
+    images: [
       {
-        url: String,
-        public_id: String,
-      },
+        url: {
+          type: String
+        },
+        public_id: {
+          type: String
+        }
+      }
     ],
-   ratings : {
-    type : String,
-    // required : true
-   } ,
-   numReviews : {
-    type : String,
-    // required : true
-   } ,
 
-  //  createdBy : {
-  //   type : String,
-  //   required : true
-  //  } ,
-   
-} , {timestamps : true})
+    ratings: {
+      type: Number,
+      default: 0
+    },
 
-export const Product = mongoose.model("Product" , ProductModel)
+    numReviews: {
+      type: Number,
+      default: 0
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true
+    },
+
+    isOrderd : {
+      type : Boolean,
+      default : false
+    }
+  },
+  { timestamps: true }
+);
+
+export const Product = mongoose.model("Product", productSchema);

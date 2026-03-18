@@ -19,7 +19,13 @@ app.use(cookieParser());
 import userRoute from "./routes/user.routes.js"
 import addressRoute from "./routes/address.routes.js"
 import adminRoute from "./routes/admin.routes.js"
+import paginationRoute from './routes/pagination.routes.js'
+import ProductRoute from './routes/Product.routes.js'
+import CategoryRoute from "./routes/category.routes.js"
 app.use("/api/v1/users" , userRoute);
 app.use("/api/v1/address" , addressRoute);
-app.use("/api/v1/admin", adminRoute)
+app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/pagination" , paginationRoute);
+app.use("/api/v1/Product" , ProductRoute);
+app.use("/api/v1/Category" , CategoryRoute)
 export {app}
