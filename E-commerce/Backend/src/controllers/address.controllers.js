@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 
 export const createAddress = asyncHandler(async (req , res) => {
     try {
-        const {state , city , pincode , street , addressLine , landmark , addressType} = req.body;
+        const {state , city , pincode , street , addressLine , landmark , addressType , isDefault} = req.body;
     
         if(!state || !city || !pincode  || !addressLine || !landmark || !addressType) {
             return res.status(400).json({message : "All fileds are required "});
@@ -17,7 +17,8 @@ export const createAddress = asyncHandler(async (req , res) => {
             addressLine,
             landmark,
             addressType,
-            userID : req.user._id
+            userID : req.user._id,
+            isDefault : isDefault || false
         })
     
         return res.status(200).json({message : "Address created succfully " , address})
