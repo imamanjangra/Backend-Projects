@@ -79,10 +79,6 @@ const productSchema = new Schema(
       default: true
     },
 
-    isOrderd : {
-      type : Boolean,
-      default : false
-    }
   },
   { timestamps: true }
 );

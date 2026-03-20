@@ -2,7 +2,8 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-  getProductsByCategory
+  getProductsByCategory,
+  getAllProductUser
 } from "../controllers/Product.controlles.js";
 import { Router } from "express";
 import { Protect } from "../middleware/auth.middleware.js";
@@ -27,5 +28,6 @@ router.route("/update/:id").patch(Protect, adminVerify ,  updateProduct);
 
 router.route("/getProductsByCategory/:categoryId").get(Protect, adminVerify ,  getProductsByCategory);
 
+router.route("/getAllProductUser").get(Protect, adminVerify ,  getAllProductUser);
 
 export default router;

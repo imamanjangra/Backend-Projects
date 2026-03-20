@@ -125,6 +125,18 @@ export const deleteProduct = asyncHandler(async (req , res) => {
   }
 )
 
+export const getAllProductUser = asyncHandler(async (req , res) => {
+  try {
+    const product = await Product.find();
+    if(!product){
+      return res.status(400).json({message : "Product not found "});
+    }
+    return res.status(200).json({message : "Product find succfully"  , product , length : product.length} )
+  } catch (error) {
+    return res.status(500).json({message : "Somthing went Wrong" , error : error.message , stack : error.stack})
+  }
+})
+
 export const getProductsByCategory = async (req, res) => {
   try {
 
@@ -146,4 +158,5 @@ export const getProductsByCategory = async (req, res) => {
     });
   }
 };
+
 
