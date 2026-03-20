@@ -13,13 +13,19 @@ const orderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Product"
       },
-      quantity : {
-        type : Number,
-      }
+      name: String,
+      price: Number,
+      quantity: Number,
+      image: String
     }
   ],
 
+  totalPrice: {
+    type: Number,
+    required: true
+  },
+
+
 }, { timestamps: true });
 
-export const Order = mongoose.model("Order" , orderSchema)
-
+export const Order = mongoose.model('Order' , orderSchema)

@@ -15,7 +15,6 @@ import { Product } from "../model/Product.model.js";
 //     let items = [];
 //     let totalPrice = 0;
 
-   
 //     for (const item of orderItems) {
 
 //       const product = await Product.findById(item.product);
@@ -42,7 +41,6 @@ import { Product } from "../model/Product.model.js";
 
 //       items.push(orderItem);
 
-
 //       totalPrice += product.price * item.quantity;
 
 //       product.stock -= item.quantity;
@@ -57,7 +55,6 @@ import { Product } from "../model/Product.model.js";
 //       totalPrice
 //     });
 
-
 //     return res.status(201).json({
 //       message: "Order created successfully",
 //       order
@@ -71,57 +68,71 @@ import { Product } from "../model/Product.model.js";
 //   }
 // };
 
+export const shoppingCart = async (req, res) => {
+  try {
+    const { quantity = 1 } = req.body;
 
-export const shoppingCart = async (req , res) => {
-try {
-  
     const product = await Product.findById(req.params.id);
-    const {quantity} = req.body;
-    if(!product){
-      return res.status(400).json({message : "Product not found "});
+    if (!product) {
+      return res.status(400).json({ message: "Product not found" });
     }
-  
-    let cart = await Order.findOne({user : req.user.id});
-  
-    if(!cart){
+
+    let cart = await Order.findOne({ user: req.user.id });
+
+    if (!cart) {
       cart = await Order.create({
-        user : req.user._id,
-        orderItems :[
-         {
-          product : req.params.id,
-          quantity : quantity
-         }
-        ]
-      })
-    }
-    else{
-       const itemIndex = cart.orderItems.findIndex(
-          item => item.product.toString() === req.params.id
-        );
-  
-         if (itemIndex > -1) {
-          cart.orderItems[itemIndex].quantity += quantity;
-        } else {
-          cart.orderItems.push({
-            product: req.params.id,
-            quantity : quantity
+        user: req.user._id,
+        orderItems: [
+          {
+            product: product._id,
+            name: product.name,
+            price: product.price,
+            quantity: quantity,
+            image: product.coverImage,
+          },
+        ],
+        totalPrice: product.price * quantity,
+      });
+    } else {
+      const itemIndex = cart.orderItems.findIndex(
+        (item) => item.product.toString() === req.params.id,
+      );
+
+      
+      if (itemIndex > -1) {
+        cart.orderItems[itemIndex].quantity += quantity;
+        
+        if ( cart.orderItems[itemIndex].quantity > product.stock) {
+          return res.status(400).json({
+            message: "Out of stock or limited stock available",
           });
         }
-        await cart.save();
-  
-        
+
+      } else {
+        cart.orderItems.push({
+          product: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: quantity,
+          image: product.coverImage,
+        });
       }
-      res.status(200).json({
+
+      let Total = product.price * quantity;
+      cart.totalPrice = cart.totalPrice + Total;
+      await cart.save();
+    }
+
+    res.status(200).json({
       success: true,
       message: "Item added to cart",
-      cart
+      cart,
     });
-  
-  
-} catch (error) {
-  res.status(500).json({
-      message: error.message
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
-}
+  }
+};
 
-}
+

@@ -22,7 +22,8 @@ import adminRoute from "./routes/admin.routes.js"
 import paginationRoute from './routes/pagination.routes.js'
 import ProductRoute from './routes/Product.routes.js'
 import CategoryRoute from "./routes/category.routes.js"
-import OrderRoute from "./routes/shoppingCart.routes.js"
+import OrderRoute from "./routes/order.routes.js"
+import finalorder from "./routes/FinalOrder.routes.js"
 app.use("/api/v1/users" , userRoute);
 app.use("/api/v1/address" , addressRoute);
 app.use("/api/v1/admin", adminRoute);
@@ -30,4 +31,5 @@ app.use("/api/v1/pagination" , paginationRoute);
 app.use("/api/v1/Product" , ProductRoute);
 app.use("/api/v1/Category" , CategoryRoute);
 app.use("/api/v1/cart" , OrderRoute)
+app.use("/api/v1/order" , finalorder)
 export {app}
