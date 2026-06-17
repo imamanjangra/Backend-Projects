@@ -32,7 +32,7 @@ export const createShortUrl = async (req, res) => {
       } while (existing);
     }
 
-    if (qrcode === "true") {
+    if (qrcode === true) {
       const shortUrl = `http://localhost:8000/api/v1/url/${shortID}`;
       const qr = await QRCode.toDataURL(shortUrl);
       const newUrl = await URL.create({
@@ -71,7 +71,7 @@ export const redirectUrl = async (req, res) => {
 
     const urlDoc = await URL.findOne({ shortID });
 
-    // console.log(urlDoc);
+
 
     if (!urlDoc) {
       return res.status(404).json({ message: "Short URL not found" });

@@ -14,7 +14,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.route("/rigister").post(CreateUser);
+router.route("/register").post(CreateUser);
 router.route("/login").post(loginUser);
 router.route("/logout").post(Protect, LogoutUser);
 router.route("/changepassword").post(Protect, changeCurrentPassword);

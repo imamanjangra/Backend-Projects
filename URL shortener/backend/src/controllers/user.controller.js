@@ -19,7 +19,7 @@ export const CreateUser = async (req, res) => {
 
     if (
       [FullName, username, email, password].some(
-        (fildes) => fildes.trim() == "",
+        (fildes) => !fildes || fildes.trim() == "",
       )
     ) {
       return res.status(400).json({ message: "All filed are reqiured " });
@@ -43,68 +43,68 @@ export const CreateUser = async (req, res) => {
       "-password -refreshToken ",
     );
 
-      const {accessToken , refreshToken} = await generateAccessTokenAndRefreshToken(user._id);
-       const options = {
-         httpOnly : true,
-         secure : true
-     }
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+    const options = {
+      httpOnly: true,
+      secure: true
+    }
 
-     
-     return res.status(200)
-     .cookie("accessToken" , accessToken , options)
-     .cookie("refreshToken" , refreshToken , options)
-     .json({message : "User rigister successfuly " ,  user : createdUser , accessToken , refreshToken})
+
+    return res.status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({ message: "User rigister successfuly ", user: createdUser, accessToken, refreshToken })
 
   } catch (error) {
-    return res.status(400).json({ message: "Somthing went wrong" , error : error.message , stack : error.stack });
+    return res.status(400).json({ message: "Somthing went wrong", error: error.message, stack: error.stack });
   }
 };
 
-export const loginUser = async (req , res) => {
-   try {
-     const {email , username , password} = req.body;
- 
+export const loginUser = async (req, res) => {
+  try {
+    const { email, username, password } = req.body;
+
     if ((!email && !username) || !password) {
-    return res.status(400).json({
+      return res.status(400).json({
         message: "Email or username and password are required"
-    });
-}
- 
-     const user = await User.findOne({
-         $or : [{username} , {email}]
-     })
- 
-     if(!user){
-         return res.status(404).json({message : "User is not found "});
-     }
- 
-     const PasswordCheck = await user.isPassworCorrect(password);
+      });
+    }
 
-     if(!PasswordCheck){
-         return res.status(400).json({message : "Password and Username is not correct :( "})
-     }
- 
-     const {accessToken , refreshToken} = await generateAccessTokenAndRefreshToken(user._id);
- 
-     const logginUser = await User.findById(user._id).select("-password -refreshToken");
- 
-     const options = {
-         httpOnly : true,
-         secure : true
-     }
-     
-     return res.status(200)
-     .cookie("accessToken" , accessToken , options)
-     .cookie("refreshToken" , refreshToken , options)
-     .json({message : "Login user successfuly " , user : logginUser , accessToken , refreshToken})
-     
- 
- 
-     // return res.status(200).json({message : "User login successfuly " , user});
-   } catch (error) {
-        return res.status(401).json({message : `failed to login user :  ${error}`})
+    const user = await User.findOne({
+      $or: [{ username }, { email }]
+    })
 
-   }
+    if (!user) {
+      return res.status(404).json({ message: "User is not found " });
+    }
+
+    const PasswordCheck = await user.isPassworCorrect(password);
+
+    if (!PasswordCheck) {
+      return res.status(400).json({ message: "Password and Username is not correct :( " })
+    }
+
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+
+    const logginUser = await User.findById(user._id).select("-password -refreshToken");
+
+    const options = {
+      httpOnly: true,
+      secure: true
+    }
+
+    return res.status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({ message: "Login user successfuly ", user: logginUser, accessToken, refreshToken })
+
+
+
+    // return res.status(200).json({message : "User login successfuly " , user});
+  } catch (error) {
+    return res.status(401).json({ message: `failed to login user :  ${error}` })
+
+  }
 }
 
 
@@ -160,12 +160,12 @@ export const changeCurrentPassword = async (req, res) => {
 
     return res.status(200).json({ messsage: "Password is updated Succfully " });
   } catch (error) {
-  return res.status(500).json({
-    message: "Something went wrong",
-    error: error.message,
-    stack: error.stack
-  });
-}
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+      stack: error.stack
+    });
+  }
 };
 
 export const getuserData = async (req, res) => {

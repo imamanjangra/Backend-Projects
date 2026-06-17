@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 // import API from "../utils/api";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -13,10 +14,11 @@ export const AuthProvider = ({ children }) => {
 
     try {
       if (savedUser && savedUser !== "undefined") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(JSON.parse(savedUser));
       }
     } catch (error) {
-      console.log("Invalid user data in localStorage");
+      console.log("Invalid user data in localStorage", error.message);
       localStorage.removeItem("user");
     }
   }, []);
@@ -24,7 +26,9 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await API.post("/user/logout"); // clear cookie in backend
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error Caught while loging out User", error.message);
+    }
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
