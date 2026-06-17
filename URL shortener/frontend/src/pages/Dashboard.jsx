@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link2, Copy, Check, BarChart2, Calendar, Trash, QrCode } from "lucide-react";
+import { Link2, Copy, Check, BarChart2, Calendar, Trash, QrCode, X } from "lucide-react";
 import API from "@/service/Api";
 
 
@@ -11,11 +11,27 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   // const { user } = useContext(AuthContext);
   const [copiedId, setCopiedId] = useState(null);
-  const [qr, setQr] = useState(null)
-  const [showQR, setShowQr] = useState(false)
+  const [selectedUrl, setSelectedUrl] = useState(null);
+  const [showQrModal, setShowQrModal] = useState(false);
 
-  // console.log(user);
-  console.log(urls);
+  // console.log(urls);
+  
+
+  // const [stats, setStats] = useState(null);
+
+  // useEffect(() => {
+  //   async function fetchStats() {
+  //     try {
+  //       const res = await API.get(`/click/stats/${urlId}`);
+  //       setStats(res.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+
+  //   fetchStats();
+  // }, [urlId]);
+
 
   useEffect(() => {
     const fetchUrls = async () => {
@@ -38,6 +54,13 @@ export default function Dashboard() {
   const copyToClipboard = (id, link) => {
     navigator.clipboard.writeText(link);
     setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const copyModalLink = () => {
+    if (!selectedUrl?.shortLink) return;
+    navigator.clipboard.writeText(selectedUrl.shortLink);
+    setCopiedId(selectedUrl.shortLink);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -127,17 +150,16 @@ export default function Dashboard() {
                           onClick={() => handleDelete(url._id)}
                         ><Trash size={20} className="text-red-600" />
                         </button>
-                        <div className="relative">
-                          <button onClick={() => setQr(url.Qrcode)}>
-                            <QrCode />
-                          </button>
-
-                          {qr === url.Qrcode && (
-                            <div className="absolute w-50 top-full right-10 mt-2 bg-white p-2 shadow-lg rounded z-50 ">
-                              <img src={url.Qrcode} alt="QR" className="w-40 h-40" />
-                            </div>
-                          )}
-                        </div>
+                        <button
+                          type="button"
+                          className="flex items-center justify-center p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                          onClick={() => {
+                            setSelectedUrl({ shortLink, qrcode: url.Qrcode });
+                            setShowQrModal(true);
+                          }}
+                        >
+                          <QrCode size={18} />
+                        </button>
                       </div>
 
                     </div>
@@ -149,6 +171,49 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
+      {showQrModal && selectedUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 py-6"
+          onClick={() => setShowQrModal(false)}
+        >
+          <div
+            className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl ring-1 ring-black/10 overflow-hidden"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-navy">QR Code</h2>
+                <p className="text-sm text-gray-500">Scan or copy the short link below.</p>
+              </div>
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
+                onClick={() => setShowQrModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="px-6 py-6 text-center">
+              <div className="inline-flex h-64 w-64 items-center justify-center rounded-3xl bg-gray-50 p-6">
+                <img src={selectedUrl.qrcode} alt="QR Code" className="max-h-full max-w-full" />
+              </div>
+              <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 text-left">
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Short link</p>
+                <p className="mt-2 break-all text-sm font-medium text-gray-900">{selectedUrl.shortLink}</p>
+              </div>
+              <button
+                type="button"
+                className="mt-5 w-full rounded-2xl bg-orange px-4 py-3 text-sm font-semibold text-white hover:bg-[#d5551c] transition-colors"
+                onClick={() => {
+                  copyModalLink();
+                }}
+              >
+                {copiedId === selectedUrl.shortLink ? "Link copied" : "Copy link"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

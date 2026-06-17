@@ -7,6 +7,8 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+
+  
   // Mocking Analytics since the backend doesn't have a time-series endpoint yet
   useEffect(() => {
     setTimeout(() => {
