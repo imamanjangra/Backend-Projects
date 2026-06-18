@@ -4,7 +4,7 @@ import { URL } from "../model/url.model.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const year = new Date().getFullYear();
+    const year = Number(req.query.year) || new Date().getFullYear();
 
     const [userStats, urlStats] = await Promise.all([
       User.aggregate([

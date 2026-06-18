@@ -1,29 +1,41 @@
 /* eslint-disable react-hooks/static-components */
 
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/Contexts/auth.context";
 import { Copy, Navigation, Link as LinkIcon, Settings, BarChart2, ShieldAlert, LogOut, Menu, X ,House } from "lucide-react";
 import { useState } from "react";
+import API from "@/service/Api";
 
 export default function SidebarLayout() {
   const { user, logout } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null)
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
   };
 
+  useEffect(() => {
+    const getUser = async () => {
+      const res = await API.get('/users/userdata')
+      setUserRole(res.data?.user?.role)
+        }
+    getUser()
+  }, []) 
+
+  
+  
   const navLinks = [
     { name: "Home", path: "/app", icon: <House size={20} /> },
     { name: "Links", path: "/app/links", icon: <LinkIcon size={20} /> },
     { name: "Analytics", path: "/app/analytics", icon: <BarChart2 size={20} /> },
     { name: "Settings", path: "/app/settings", icon: <Settings size={20} /> },
 
-    ...(user?.role === "admin"
+    ...(userRole === "admin"
       ? [{ name: "Admin", path: "/app/admin", icon: <ShieldAlert size={20} /> }]
       : []),
   ];
