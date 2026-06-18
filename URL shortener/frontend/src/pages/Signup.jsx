@@ -1,13 +1,13 @@
 import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Link as LinkIcon, Mail, Apple, Users, Clipboard } from "lucide-react";
+import { Eye, EyeOff, Link as LinkIcon, Mail, Apple, Users, Clipboard, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-
+import "../App.css"
 import API from "@/service/Api";
 import { AuthContext } from "@/Contexts/auth.context";
 
@@ -31,6 +31,13 @@ export default function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      toast.error("Password must be at least 8 characters and include uppercase, lowercase, and a number.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -38,8 +45,8 @@ export default function Signup() {
     setLoading(true);
     try {
       const { data } = await API.post("/users/register", {
-        FullName:name,
-        username:email.split("@")[0],
+        FullName: name,
+        username: email.split("@")[0],
         email,
         password
       });
@@ -66,6 +73,25 @@ export default function Signup() {
     }
   };
 
+  const checks = {
+    length: password.length >= 8,
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password)
+  };
+  const passwordStrength =
+    Number(checks.length) +
+    Number(checks.special) +
+    Number(checks.uppercase) +
+    Number(checks.number);
+
+  const strengthLabel = [
+    "Very Weak",
+    "Weak",
+    "Fair",
+    "Good",
+    "Strong"
+  ][passwordStrength];
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f7f3] px-4 py-10">
       <div className="w-full max-w-6xl">
@@ -87,11 +113,11 @@ export default function Signup() {
               </div>
 
               {/* <div className="grid gap-3 mb-6"> */}
-                {/* <button type="button" className="inline-flex items-center justify-center gap-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-navy transition hover:border-orange/50 hover:bg-orange/5">
+              {/* <button type="button" className="inline-flex items-center justify-center gap-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-navy transition hover:border-orange/50 hover:bg-orange/5">
                   <Google className="h-5 w-5 text-orange" />
                   Continue with Google
                 </button> */}
-                {/* <button type="button" className="inline-flex items-center justify-center gap-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-navy transition hover:border-orange/50 hover:bg-orange/5">
+              {/* <button type="button" className="inline-flex items-center justify-center gap-3 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm text-navy transition hover:border-orange/50 hover:bg-orange/5">
                   <Apple className="h-5 w-5 text-navy" />
                   Continue with Apple
                 </button>
@@ -179,11 +205,65 @@ export default function Signup() {
                         {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                  </div>
+                    </div>
+                    <div className={`transition-all duration-300 overflow-hidden ${password
+                      ? "max-h-60 opacity-100 mt-3"
+                      : "max-h-0 opacity-0"
+                      }`}
+                    >
 
-                  <Button type="submit" className="w-full rounded-2xl bg-navy hover:bg-[#15274d] text-white py-3 text-base font-semibold transition-colors" disabled={loading}>
-                    {loading ? "Creating account..." : "Sign up"}
-                  </Button>
+                      <div className="space-y-3 pt-2">
+
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-500">Password Strength</span>
+                          <span
+                            className={`font-medium
+          ${passwordStrength < 2 ? "text-red-500" :
+                                passwordStrength < 4 ? "text-amber-500" :
+                                  "text-green-500"}
+        `}
+                          >
+                            {strengthLabel}
+                          </span>
+                        </div>
+
+                        <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300
+          ${passwordStrength < 2 ? "bg-red-500" :
+                                passwordStrength < 4 ? "bg-amber-500" :
+                                  "bg-green-500"}
+        `}
+                            style={{
+                              width: `${(passwordStrength / 4) * 100}%`
+                            }}
+                          />
+                        </div>
+
+                        <div className="grid gap-1 text-xs">
+                          <div className={checks.length ? "text-green-500" : "text-slate-500"}>
+                            {checks.length ? "✓" : "○"} 8+ characters
+                          </div>
+
+                          <div className={checks.uppercase ? "text-green-500" : "text-slate-500"}>
+                            {checks.uppercase ? "✓" : "○"} Uppercase letter
+                          </div>
+
+                          <div className={checks.number ? "text-green-500" : "text-slate-500"}>
+                            {checks.number ? "✓" : "○"} Number
+                          </div>
+
+                          <div className={checks.special ? "text-green-500" : "text-slate-500"}>
+                            {checks.special ? "✓" : "○"} Special character
+                          </div>
+                        </div>
+
+                      </div>
+                  
+                    </div>
+                    <Button type="submit" className="w-full rounded-2xl bg-navy hover:bg-[#15274d] text-white py-3 text-base font-semibold transition-colors" disabled={loading}>
+                      {loading ? "Creating account..." : "Sign up"}
+                    </Button>
                 </form>
 
                 <div className="mt-6 text-center text-sm text-muted-foreground">
@@ -200,8 +280,8 @@ export default function Signup() {
               <img src="../signup.png" alt="singup" className="h-full w-full object-cover " />
             </div>
           </div>
-        </Card>
-      </div>
-    </div>
+        </Card >
+      </div >
+    </div >
   );
 }
