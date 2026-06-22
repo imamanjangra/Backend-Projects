@@ -11,6 +11,8 @@ import Admin from "./pages/Admin";
 import SidebarLayout from "./components/SidebarLayout";
 import { useContext } from "react";
 import { AuthContext } from "./Contexts/auth.context";
+import VerifyEmail from "./pages/VerifyEmail";
+import CheckEmail from "./pages/CheckEmail";
 
 function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
@@ -50,6 +52,8 @@ export default function App() {
             </GuestRoute>
           }
         />
+          <Route path="/verify/:token" element={<VerifyEmail />} />
+        <Route path="/check-email" element={<CheckEmail />} />
 
         <Route
           path="/app"

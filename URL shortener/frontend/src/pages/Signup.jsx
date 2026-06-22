@@ -1,17 +1,10 @@
 import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Eye,
-  EyeOff,
-  Link as LinkIcon,
-} from "lucide-react";
+import { Eye, EyeOff, Link as LinkIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,7 +12,6 @@ import "../App.css";
 import API from "@/service/Api";
 import { AuthContext } from "@/Contexts/auth.context";
 import { useGoogleLogin } from "@react-oauth/google";
-
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -30,7 +22,7 @@ export default function Signup() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  console.log(name, email, password, confirmPassword);
+  // console.log(name, email, password, confirmPassword);
 
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -42,31 +34,28 @@ export default function Signup() {
   const signupWithGoogle = useGoogleLogin({
     flow: "auth-code",
 
-    onSuccess : async (codeResponse) => {
-      try { 
-         const response = await API.post("/users/google-login", {
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await API.post("/users/google-login", {
           code: codeResponse.code,
         });
         const { data } = response;
         console.log(data);
 
-         const userData = data.user;
-
+        const userData = data.user;
 
         localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
 
-      toast.success("Account created successfully");
-      navigate("/Home");
-      }
-      catch(error) {
+        toast.success("Account created successfully");
+        navigate("/Home");
+      } catch (error) {
         console.error("Google login error:", error);
         toast.error("Google login failed");
       }
-    }
-  })
-
+    },
+  });
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -93,18 +82,9 @@ export default function Signup() {
       });
       console.log(data);
 
-      const userData = {
-        _id: data._id,
-        name: data.name,
-        email: data.email,
-      };
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
-
-      toast.success("Account created successfully");
-      navigate("/Home");
+     
+      toast.success("Account created successfully. Please verify your email.");
+      navigate("/check-email");
     } catch (error) {
       console.log(error.response?.data);
       console.log(error.response?.status);
@@ -347,6 +327,7 @@ export default function Signup() {
                     type="submit"
                     className="w-full rounded-2xl bg-navy hover:bg-[#15274d] text-white py-3 text-base font-semibold transition-colors"
                     disabled={loading}
+                   
                   >
                     {loading ? "Creating account..." : "Sign up"}
                   </Button>
@@ -372,7 +353,7 @@ export default function Signup() {
               <div className="grid gap-3 mb-6">
                 <button
                   type="button"
-                   onClick={() => signupWithGoogle()}
+                  onClick={() => signupWithGoogle()}
                   className="flex items-center justify-center gap-3 w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-navy shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-orange"
                 >
                   <FcGoogle className="text-xl" />
