@@ -5,8 +5,10 @@ import App from './App.jsx'
 // import { AuthProvider } from './context/AuthContext.jsx'
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from './Contexts/auth.context';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById('root')).render(
+  <GoogleOAuthProvider clientId="694445691521-kpsaejk88sej2hpbjh4nt8mjj5ma7s6c.apps.googleusercontent.com">
   <AuthProvider>
      <Toaster
   position="down-right"
@@ -33,4 +35,5 @@ createRoot(document.getElementById('root')).render(
 
     <App />
   </AuthProvider>
+  </GoogleOAuthProvider>
 )
