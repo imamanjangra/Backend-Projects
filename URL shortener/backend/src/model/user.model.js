@@ -20,14 +20,30 @@ const UserModel = new Schema({
         required : true,
         unique : true,
     },
-    password : {
-        type : String,
-        required : true
-    },
+    password: {
+    type: String,
+    required: function () {
+        return !this.googleId;
+    }
+},
+    googleId: {
+    type: String
+},
     role : {
         type : String,
         enum : ["user" , "admin"],
         default : "user"
+    },
+     isVerified: {
+        type: Boolean,
+        default: false
+    },
+    picture: {
+    type: String
+},
+
+    verificationToken: {
+        type: String
     },
     refreshToken : {
         type : String,

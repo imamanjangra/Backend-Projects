@@ -8,6 +8,7 @@ import {
   getuserData,
   updateUserInfo,
   refreshAccessToken,
+  googleLogin,
 } from "../controllers/user.controller.js";
 
 import { Router } from "express";
@@ -21,6 +22,7 @@ router.route("/changepassword").post(Protect, changeCurrentPassword);
 router.route("/update").patch(Protect, updateUserInfo);
 router.route("/userdata").get(Protect, getuserData);
 router.route("/refreshToken").get(Protect, refreshAccessToken);
-
+// google login route
+router.post("/google-login" , googleLogin);
 
 export default router;
