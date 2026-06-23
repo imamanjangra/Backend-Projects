@@ -1,9 +1,25 @@
 import { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Link as LinkIcon, Mail, Apple, PieChart, TrendingUp } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
+import {
+  Eye,
+  EyeOff,
+  Link as LinkIcon,
+  Mail,
+  Apple,
+  PieChart,
+  TrendingUp,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -35,14 +51,11 @@ export default function Login() {
       const userData = {
         _id: data?.user?._id,
         name: data?.user?.FullName,
-        email: data?.user?.email
+        email: data?.user?.email,
       };
       console.log(userData);
-      
-      localStorage.setItem(
-        "user",
-        JSON.stringify(userData)
-      );
+
+      localStorage.setItem("user", JSON.stringify(userData));
 
       setUser(userData);
 
@@ -55,23 +68,54 @@ export default function Login() {
     }
   };
 
+  const signupWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await API.post("/users/google-login", {
+          code: codeResponse.code,
+        });
+        const { data } = response;
+        console.log(data);
+
+        const userData = data.user;
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+
+        toast.success("Logged in successfully");
+        navigate("/Home");
+      } catch (error) {
+        console.error("Google login error:", error);
+        toast.error("Google login failed");
+      }
+    },
+  });
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f7f3] px-4 py-10">
       <div className="w-full max-w-6xl">
         <Card className="overflow-hidden py-0 rounded-[2rem] border border-border bg-white shadow-[0_24px_80px_rgba(11,23,54,0.1)]">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="px-8 py-10 md:px-12 lg:px-14">
-              <Link to='/' className="flex items-center gap-3 mb-8">
+              <Link to="/" className="flex items-center gap-3 mb-8">
                 <div className="rounded-3xl bg-orange px-3 py-2 shadow-lg shadow-orange/15">
                   <LinkIcon className="text-white w-7 h-7" />
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-navy">LinkShort</span>
+                <span className="text-2xl font-bold tracking-tight text-navy">
+                  LinkShort
+                </span>
               </Link>
 
               <div className="mb-8">
-                <CardTitle className="text-4xl font-semibold tracking-tight text-navy mb-3">Welcome back!</CardTitle>
+                <CardTitle className="text-4xl font-semibold tracking-tight text-navy mb-3">
+                  Welcome back!
+                </CardTitle>
                 <CardDescription className="text-base text-muted-foreground max-w-xl">
-                  Log in to your account and start shortening links with analytics that help you grow.
+                  Log in to your account and start shortening links with
+                  analytics that help you grow.
                 </CardDescription>
               </div>
 
@@ -98,7 +142,12 @@ export default function Login() {
               <CardContent className="p-0">
                 <form onSubmit={handleLoginForm} className="space-y-5">
                   <div className="space-y-3">
-                    <Label htmlFor="email" className="text-sm font-medium text-navy">Email</Label>
+                    <Label
+                      htmlFor="email"
+                      className="text-sm font-medium text-navy"
+                    >
+                      Email
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -113,7 +162,12 @@ export default function Login() {
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium text-navy">Password</Label>
+                      <Label
+                        htmlFor="password"
+                        className="text-sm font-medium text-navy"
+                      >
+                        Password
+                      </Label>
                     </div>
                     <div className="relative">
                       <Input
@@ -132,19 +186,47 @@ export default function Login() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy transition-colors"
                         disabled={loading}
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </button>
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full rounded-2xl bg-navy hover:bg-[#15274d] text-white py-3 text-base font-semibold transition-colors" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="w-full rounded-2xl bg-navy hover:bg-[#15274d] text-white py-3 text-base font-semibold transition-colors"
+                    disabled={loading}
+                  >
                     {loading ? "Signing in..." : "Log in"}
                   </Button>
                 </form>
 
+                <div className="grid mt-6 gap-3 mb-6">
+                   <div className="relative mx-auto w-fit bg-white px-4 text-sm text-gray-500">
+                  OR
+                </div>
+                  <Button
+                    type="button"
+                    onClick={signupWithGoogle}
+                    variant="outline"
+                    className="w-full rounded-2xl py-6 border-gray-300 bg-white hover:bg-gray-50 hover:border-orange transition-all duration-200 flex items-center justify-center gap-3"
+                  >
+                    <FcGoogle size={22} />
+                    <span className="font-medium text-navy">
+                      Continue with Google
+                    </span>
+                  </Button>
+                </div>
+
                 <div className="mt-6 text-center text-sm text-muted-foreground">
                   <span>Don't have an account? </span>
-                  <Link to="/signup" className="font-semibold text-navy hover:text-orange hover:underline">
+                  <Link
+                    to="/signup"
+                    className="font-semibold text-navy hover:text-orange hover:underline"
+                  >
                     Sign up
                   </Link>
                 </div>
@@ -154,10 +236,15 @@ export default function Login() {
             <div className="relative overflow-hidden bg-orange/5 px-18 py-18 h-full md:px-12 lg:px-14">
               <div className="absolute -right-32 top-10 h-56 w-56 rounded-full bg-orange/20 blur-3xl" />
               <div className="relative">
-                <span className="text-sm font-semibold uppercase tracking-[0.3em] text-orange">LinkShort</span>
-                <h2 className="mt-6 text-3xl font-bold tracking-tight text-navy">Shorten, share, and track with ease.</h2>
+                <span className="text-sm font-semibold uppercase tracking-[0.3em] text-orange">
+                  LinkShort
+                </span>
+                <h2 className="mt-6 text-3xl font-bold tracking-tight text-navy">
+                  Shorten, share, and track with ease.
+                </h2>
                 <p className="mt-4 max-w-lg text-sm text-muted-foreground">
-                  Access powerful link shortening with analytics, team-ready link management, and fast URL creation.
+                  Access powerful link shortening with analytics, team-ready
+                  link management, and fast URL creation.
                 </p>
 
                 <div className="mt-8 grid gap-4">
@@ -167,8 +254,12 @@ export default function Login() {
                         <PieChart className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-navy">Analytics built in</p>
-                        <p className="text-sm text-muted-foreground">See click trends and URL performance instantly.</p>
+                        <p className="text-sm font-semibold text-navy">
+                          Analytics built in
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          See click trends and URL performance instantly.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -178,8 +269,12 @@ export default function Login() {
                         <TrendingUp className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-navy">Link growth</p>
-                        <p className="text-sm text-muted-foreground">Create memorable URLs and increase sharing.</p>
+                        <p className="text-sm font-semibold text-navy">
+                          Link growth
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Create memorable URLs and increase sharing.
+                        </p>
                       </div>
                     </div>
                   </div>
