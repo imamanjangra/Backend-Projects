@@ -128,7 +128,7 @@ export const CreateUser = async (req, res) => {
       username,
       email,
       password,
-      isVerified: false,
+      isVerified: true,
     });
 const createdUser = await User.findById(user._id).select(
   "-password -refreshToken"

@@ -39,7 +39,7 @@ const UserModel = new Schema(
     },
     isVerified: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     picture: {
       type: String,
