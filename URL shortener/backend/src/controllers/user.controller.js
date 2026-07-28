@@ -56,7 +56,7 @@ export const CreateUser = async (req, res) => {
       secure: true,
     };
 
-    const url = `http://localhost:5173/verify/${verificationToken}`;
+    const url = `https://url-sortner-psi.vercel.app/verify/${verificationToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
