@@ -96,7 +96,7 @@ export default function Dashboard() {
           ) : (
             <div className="divide-y divide-gray-100">
               {urls.map((url) => {
-                const shortLink = `http://localhost:8000/${url.shortID}`;
+                const shortLink = `https://url-shortener-backend-5s9y.onrender.com/${url.shortID}`;
                 const origLink = url.originalUrl || url.original_url;
                 // Since this isn't returned by backend natively yet, we mock a title/clicks
                 // const title = url.title || "Untitled Link";

@@ -34,7 +34,7 @@ function CreateNewLink() {
       
       const shortID = res.data.newUrl?.shortID;
 
-      setShortUrl(`http://localhost:8000/${shortID}`);
+      setShortUrl(`https://url-shortener-backend-5s9y.onrender.com/${shortID}`);
       setQRCode(res.data.newUrl?.Qrcode || "");
       setCreateurl("");
     } catch (err) {

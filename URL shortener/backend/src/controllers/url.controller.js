@@ -33,7 +33,7 @@ export const createShortUrl = async (req, res) => {
     }
 
     if (qrcode === true) {
-      const shortUrl = `http://localhost:8000/api/v1/url/${shortID}`;
+      const shortUrl = `https://url-shortener-backend-5s9y.onrender.com/v1/url/${shortID}`;
       const qr = await QRCode.toDataURL(shortUrl);
       const newUrl = await URL.create({
         shortID,
@@ -162,7 +162,7 @@ export const updateUrl = async (req, res) => {
     }
 
     if (qrcode === "true") {
-      const shortUrl = `http://localhost:8000/api/v1/url/${url.shortID}`;
+      const shortUrl = `https://url-shortener-backend-5s9y.onrender.com/api/v1/url/${url.shortID}`;
       const qr = await QRCode.toDataURL(shortUrl);
       url.Qrcode = qr;
     }
