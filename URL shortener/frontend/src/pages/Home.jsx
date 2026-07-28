@@ -32,7 +32,7 @@ export default function Home() {
       const shortID = res.data.newUrl.shortID;
       console.log(shortID);
 
-      setShortUrl(`http://localhost:8000/${shortID}`);
+      setShortUrl(`https://url-shortener-backend-5s9y.onrender.com/${shortID}`);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to shorten URL");
     } finally {
