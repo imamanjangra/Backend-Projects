@@ -15,16 +15,101 @@ export const generateAccessTokenAndRefreshToken = async (id) => {
   return { accessToken, refreshToken };
 };
 
+// export const CreateUser = async (req, res) => {
+//   try {
+//     const { FullName, username, email, password } = req.body;
+
+//     if (
+//       [FullName, username, email, password].some(
+//         (fildes) => !fildes || fildes.trim() == "",
+//       )
+//     ) {
+//       return res.status(400).json({ message: "All filed are reqiured " });
+//     }
+
+//     const existedUser = await User.findOne({
+//       $or: [{ username }, { email }],
+//     });
+
+//     if (existedUser) {
+//       return res.status(409).json({ message: "User is existed already!!" });
+//     }
+
+//     const verificationToken = crpto.randomBytes(32).toString("hex");
+
+//     const user = await User.create({
+//       FullName: FullName,
+//       username: username,
+//       email: email,
+//       password: password,
+//       verificationToken: verificationToken,
+//     });
+
+//     const createdUser = await User.findById(user._id).select(
+//       "-password -refreshToken ",
+//     );
+
+//     const { accessToken, refreshToken } =
+//       await generateAccessTokenAndRefreshToken(user._id);
+//     const options = {
+//       httpOnly: true,
+//       secure: true,
+//     };
+
+//     const url = `https://url-sortner-psi.vercel.app/verify/${verificationToken}`;
+
+//     await transporter.sendMail({
+//       from: process.env.EMAIL_USER,
+//       to: email,
+//       subject: "Verify your email",
+
+//       html: `
+//             <h2>Email Verification</h2>
+
+//             <p>Click below to verify your account.</p>
+
+//             <a href="${url}">
+//                 Verify Email
+//             </a>
+//             `,
+//     });
+
+//     res.status(201).json({
+//       message: "Verification email sent",
+//     });
+
+//     return res
+//       .status(200)
+//       .cookie("accessToken", accessToken, options)
+//       .cookie("refreshToken", refreshToken, options)
+//       .json({
+//         message: "User rigister successfuly ",
+//         user: createdUser,
+//         accessToken,
+//         refreshToken,
+//       });
+//   } catch (error) {
+//     return res.status(400).json({
+//       message: "Somthing went wrong",
+//       error: error.message,
+//       stack: error.stack,
+//     });
+//   }
+// };
+
 export const CreateUser = async (req, res) => {
   try {
     const { FullName, username, email, password } = req.body;
 
     if (
       [FullName, username, email, password].some(
-        (fildes) => !fildes || fildes.trim() == "",
+        (field) => !field || field.trim() === ""
       )
     ) {
-      return res.status(400).json({ message: "All filed are reqiured " });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     const existedUser = await User.findOne({
@@ -32,67 +117,36 @@ export const CreateUser = async (req, res) => {
     });
 
     if (existedUser) {
-      return res.status(409).json({ message: "User is existed already!!" });
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
-    const verificationToken = crpto.randomBytes(32).toString("hex");
-
     const user = await User.create({
-      FullName: FullName,
-      username: username,
-      email: email,
-      password: password,
-      verificationToken: verificationToken,
+      FullName,
+      username,
+      email,
+      password,
+      isVerified: false,
     });
 
     const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken ",
+      "-password -refreshToken"
     );
 
-    const { accessToken, refreshToken } =
-      await generateAccessTokenAndRefreshToken(user._id);
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
-    const url = `https://url-sortner-psi.vercel.app/verify/${verificationToken}`;
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Verify your email",
-
-      html: `
-            <h2>Email Verification</h2>
-
-            <p>Click below to verify your account.</p>
-
-            <a href="${url}">
-                Verify Email
-            </a>
-            `,
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: createdUser,
     });
-
-    res.status(201).json({
-      message: "Verification email sent",
-    });
-
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        message: "User rigister successfuly ",
-        user: createdUser,
-        accessToken,
-        refreshToken,
-      });
   } catch (error) {
-    return res.status(400).json({
-      message: "Somthing went wrong",
+    console.error("Signup Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
       error: error.message,
-      stack: error.stack,
     });
   }
 };

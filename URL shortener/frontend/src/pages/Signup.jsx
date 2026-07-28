@@ -57,42 +57,84 @@ export default function Signup() {
     },
   });
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  // const handleSignup = async (e) => {
+  //   e.preventDefault();
+  //   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-    if (!passwordRegex.test(password)) {
-      toast.error(
-        "Password must be at least 8 characters and include uppercase, lowercase, and a number.",
-      );
-      return;
-    }
+  //   if (!passwordRegex.test(password)) {
+  //     toast.error(
+  //       "Password must be at least 8 characters and include uppercase, lowercase, and a number.",
+  //     );
+  //     return;
+  //   }
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    setLoading(true);
-    try {
-      const { data } = await API.post("/users/register", {
-        FullName: name,
-        username: email.split("@")[0],
-        email,
-        password,
-      });
-      console.log(data);
+  //   if (password !== confirmPassword) {
+  //     toast.error("Passwords do not match");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await API.post("/users/register", {
+  //       FullName: name,
+  //       username: email.split("@")[0],
+  //       email,
+  //       password,
+  //     });
+  //     console.log(data);
 
      
-      toast.success("Account created successfully. Please verify your email.");
-      navigate("/check-email");
-    } catch (error) {
-      console.log(error.response?.data);
-      console.log(error.response?.status);
-      toast.error(error.response?.data?.message || "Signup failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     toast.success("Account created successfully. Please verify your email.");
+  //     navigate("/check-email");
+  //   } catch (error) {
+  //     console.log(error.response?.data);
+  //     console.log(error.response?.status);
+  //     toast.error(error.response?.data?.message || "Signup failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSignup = async (e) => {
+  e.preventDefault();
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    toast.error(
+      "Password must be at least 8 characters and include uppercase, lowercase, and a number."
+    );
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    await API.post("/users/register", {
+      FullName: name,
+      username: email.split("@")[0],
+      email,
+      password,
+    });
+
+    toast.success("Account created successfully");
+
+    navigate("/check-email");
+  } catch (error) {
+    console.log(error.response?.data);
+    console.log(error.response?.status);
+
+    toast.error(
+      error.response?.data?.message || "Signup failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const checks = {
     length: password.length >= 8,
@@ -365,7 +407,7 @@ export default function Signup() {
             <div className="relative overflow-hidden bg-orange/5 ">
               <div className="absolute -right-32  rounded-full bg-orange/20 blur-3xl" />
               <img
-                src="../signup.png"
+                src="https://i.ibb.co/BKct3ppB/image.png"
                 alt="singup"
                 className="h-full w-full object-cover "
               />

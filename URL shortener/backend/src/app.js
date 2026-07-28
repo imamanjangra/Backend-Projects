@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://url-sortner-psi.vercel.app",
+    origin: ["https://url-sortner-psi.vercel.app", "http://localhost:5173", "http://localhost:4173"],
     credentials: true,
   })
 );
