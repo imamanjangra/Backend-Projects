@@ -130,16 +130,29 @@ export const CreateUser = async (req, res) => {
       password,
       isVerified: false,
     });
+const createdUser = await User.findById(user._id).select(
+  "-password -refreshToken"
+);
 
-    const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
-    );
+const { accessToken, refreshToken } =
+  await generateAccessTokenAndRefreshToken(user._id);
 
-    return res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: createdUser,
-    });
+const options = {
+  httpOnly: true,
+  secure: true,
+};
+
+return res
+  .status(201)
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
+  .json({
+    success: true,
+    user: createdUser,
+    accessToken,
+    refreshToken,
+    message: "Account created successfully",
+  });
   } catch (error) {
     console.error("Signup Error:", error);
 

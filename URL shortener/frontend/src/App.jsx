@@ -52,8 +52,8 @@ export default function App() {
             </GuestRoute>
           }
         />
-          <Route path="/verify/:token" element={<VerifyEmail />} />
-        <Route path="/check-email" element={<CheckEmail />} />
+          {/* <Route path="/verify/:token" element={<VerifyEmail />} />
+        <Route path="/check-email" element={<CheckEmail />} /> */}
 
         <Route
           path="/app"

@@ -49,7 +49,7 @@ export default function Signup() {
         setUser(userData);
 
         toast.success("Account created successfully");
-        navigate("/Home");
+        navigate("/app");
       } catch (error) {
         console.error("Google login error:", error);
         toast.error("Google login failed");
@@ -93,11 +93,11 @@ export default function Signup() {
   //     setLoading(false);
   //   }
   // };
-
-  const handleSignup = async (e) => {
+const handleSignup = async (e) => {
   e.preventDefault();
 
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   if (!passwordRegex.test(password)) {
     toast.error(
@@ -114,20 +114,22 @@ export default function Signup() {
   setLoading(true);
 
   try {
-    await API.post("/users/register", {
+    const { data } = await API.post("/users/register", {
       FullName: name,
       username: email.split("@")[0],
       email,
       password,
     });
 
+    localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    setUser(data.user);
+
     toast.success("Account created successfully");
 
-    navigate("/check-email");
+    navigate("/app", { replace: true });
   } catch (error) {
-    console.log(error.response?.data);
-    console.log(error.response?.status);
-
     toast.error(
       error.response?.data?.message || "Signup failed"
     );
@@ -135,7 +137,6 @@ export default function Signup() {
     setLoading(false);
   }
 };
-
   const checks = {
     length: password.length >= 8,
     special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
