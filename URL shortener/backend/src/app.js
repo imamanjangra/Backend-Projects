@@ -4,11 +4,11 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: ["https://url-sortner-psi.vercel.app", "http://localhost:5173", "http://localhost:4173"],
+    origin: ["https://url-sortner-psi.vercel.app", "http://localhost:5173", "http://localhost:4173" , "https://linkshort-nslt.onrender.com"],
     credentials: true,
   })
 );
