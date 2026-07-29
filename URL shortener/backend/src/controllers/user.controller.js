@@ -237,15 +237,12 @@ export const LogoutUser = async (req, res) => {
       },
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+   
 
     return res
       .status(200)
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
+      .clearCookie("accessToken", Option)
+      .clearCookie("refreshToken", Option)
       .json({ message: "User Logout successfuly " });
   } catch (error) {
     return res
@@ -416,62 +413,63 @@ export const googleLogin = async (req, res) => {
     });
   }
 };
-export const verifyEmail = async (req, res) => {
-  try {
-    const { token } = req.params;
-    const { email, password } = req.body;
 
-    const user = await User.findOne({
-      verificationToken: token,
-    });
+// export const verifyEmail = async (req, res) => {
+//   try {
+//     const { token } = req.params;
+//     const { email, password } = req.body;
 
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired token",
-      });
-    }
+//     const user = await User.findOne({
+//       verificationToken: token,
+//     });
 
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+//     if (!user) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid or expired token",
+//       });
+//     }
 
-    if (user.email !== email || !isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
+//     const isMatch = await bcrypt.compare(
+//       password,
+//       user.password
+//     );
 
-    user.isVerified = true;
-    user.verificationToken = undefined;
+//     if (user.email !== email || !isMatch) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid email or password",
+//       });
+//     }
 
-    await user.save();
+//     user.isVerified = true;
+//     user.verificationToken = undefined;
 
-    const { accessToken, refreshToken } =
-      await generateAccessTokenAndRefreshToken(user._id);
+//     await user.save();
 
-    const verifiedUser = await User.findById(user._id)
-      .select("-password -refreshToken");
+//     const { accessToken, refreshToken } =
+//       await generateAccessTokenAndRefreshToken(user._id);
 
-    return res.status(200).json({
-      success: true,
-      isVerified: true,
-      accessToken,
-      refreshToken,
-      user: verifiedUser,
-      message: "Email verified successfully",
-    });
+//     const verifiedUser = await User.findById(user._id)
+//       .select("-password -refreshToken");
 
-  } catch (error) {
+//     return res.status(200).json({
+//       success: true,
+//       isVerified: true,
+//       accessToken,
+//       refreshToken,
+//       user: verifiedUser,
+//       message: "Email verified successfully",
+//     });
 
-    console.log(error);
+//   } catch (error) {
 
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+//     console.log(error);
 
-  }
-};
+//     return res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+
+//   }
+// };
