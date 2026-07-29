@@ -1,5 +1,5 @@
 // App.jsx
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {  Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/login";
 import Signup from "./pages/Signup";
@@ -11,8 +11,7 @@ import Admin from "./pages/Admin";
 import SidebarLayout from "./components/SidebarLayout";
 import { useContext } from "react";
 import { AuthContext } from "./Contexts/auth.context";
-import VerifyEmail from "./pages/VerifyEmail";
-import CheckEmail from "./pages/CheckEmail";
+
 
 function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
@@ -28,7 +27,7 @@ export default function App() {
   const { user } = useContext(AuthContext);
 
   return (
-    <BrowserRouter>
+   
       <Routes>
         <Route
           path="/"
@@ -73,6 +72,6 @@ export default function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    
   );
 }

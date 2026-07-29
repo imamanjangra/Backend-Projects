@@ -1,5 +1,6 @@
 import { User } from "../model/user.model.js";
 import jwt from "jsonwebtoken"
+
 export const Protect = async(req , res , next) => {
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer " , "");
@@ -9,6 +10,10 @@ export const Protect = async(req , res , next) => {
         }
 
         const decodedToken = jwt.verify(token , process.env.ACCESS_TOKEN_SECRET);
+
+        if(!decodedToken) {
+            return res.status(401).json({message : "Unauthorized request"})
+        }
 
         const user = await User.findById(decodedToken._id).select("-password -refreshToken");
 

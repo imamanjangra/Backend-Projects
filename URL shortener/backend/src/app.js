@@ -5,11 +5,30 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 // app.set("trust proxy", 1);
+origin: ["https://url-sortner-psi.vercel.app", "http://localhost:5173", "http://localhost:4173" , "https://linkshort-nslt.onrender.com"],
 
 app.use(
   cors({
-    origin: ["https://url-sortner-psi.vercel.app", "http://localhost:5173", "http://localhost:4173" , "https://linkshort-nslt.onrender.com"],
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:4173",
+        "https://url-sortner-psi.vercel.app",
+        "https://linkshort-nslt.onrender.com",
+      ];
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
