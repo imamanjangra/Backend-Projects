@@ -3,12 +3,14 @@ import { User } from "../model/user.model.js";
 import jwt from "jsonwebtoken";
 import crpto from "crypto";
 import transporter from "../services/mail.js";
+import {Option} from "../utils/CookiesOption.js"
 import bcrypt from "bcrypt";
+
+
 export const generateAccessTokenAndRefreshToken = async (id) => {
   const user = await User.findById(id);
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
-
   user.refreshToken = refreshToken;
 
   await user.save({ validateBeforeSave: false });
@@ -137,15 +139,12 @@ const createdUser = await User.findById(user._id).select(
 const { accessToken, refreshToken } =
   await generateAccessTokenAndRefreshToken(user._id);
 
-const options = {
-  httpOnly: true,
-  secure: true,
-};
+
 
 return res
   .status(201)
-  .cookie("accessToken", accessToken, options)
-  .cookie("refreshToken", refreshToken, options)
+  .cookie("accessToken", accessToken, Option)
+  .cookie("refreshToken", refreshToken, Option)
   .json({
     success: true,
     user: createdUser,
@@ -203,15 +202,12 @@ export const loginUser = async (req, res) => {
       "-password -refreshToken",
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+    
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, Option)
+      .cookie("refreshToken", refreshToken, Option)
       .json({
         message: "Login user successfuly ",
         user: logginUser,
@@ -344,15 +340,12 @@ export const refreshAccessToken = async (req, res) => {
     const { accessToken, refreshToken } =
       await generateAccessTokenAndRefreshToken(user._id);
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+   
 
     res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, Option)
+      .cookie("refreshToken", refreshToken, Option)
       .json({ message: "Refresh Token is updated" }, accessToken, refreshToken);
   } catch (error) {
     return res.status(401).json({ message: "Invalid access Token" });
@@ -402,15 +395,12 @@ export const googleLogin = async (req, res) => {
       "-password -refreshToken",
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+   
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, Option)
+      .cookie("refreshToken", refreshToken, Option)
       .json({
         success: true,
         user: loggedInUser,
