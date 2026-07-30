@@ -33,7 +33,7 @@ export const createShortUrl = async (req, res) => {
     }
 
     if (qrcode === true) {
-      const shortUrl = `https://url-shortener-backend-5s9y.onrender.com/v1/url/${shortID}`;
+      const shortUrl = `https://url-shortener-backend-5s9y.onrender.com/${shortID}`;
       const qr = await QRCode.toDataURL(shortUrl);
       const newUrl = await URL.create({
         shortID,
