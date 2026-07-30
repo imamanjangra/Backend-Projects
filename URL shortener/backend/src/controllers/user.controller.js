@@ -195,14 +195,14 @@ export const loginUser = async (req, res) => {
         .json({ message: "Password and Username is not correct :( " });
     }
 
-    const { accessToken, refreshToken } =
-      await generateAccessTokenAndRefreshToken(user._id);
-
+    
     const logginUser = await User.findById(user._id).select(
       "-password -refreshToken",
     );
-
     
+    
+    const { accessToken, refreshToken } =
+      await generateAccessTokenAndRefreshToken(user._id);
 
     return res
       .status(200)

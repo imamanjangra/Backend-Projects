@@ -54,7 +54,8 @@ export default function Login() {
         email: data?.user?.email,
       };
       console.log(userData);
-
+      
+       localStorage.setItem("token", data.accessToken);
       localStorage.setItem("user", JSON.stringify(userData));
 
       setUser(userData);
@@ -81,7 +82,7 @@ export default function Login() {
 
         const userData = data.user;
 
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.accessToken);
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
 
